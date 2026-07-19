@@ -1,0 +1,179 @@
+<div class="container-fluid mt-2" style="font-family: 'Outfit', sans-serif;">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-dark">Dashboard Summary</h2>
+    <span class="text-muted small">Live status of your inventory operations</span>
+  </div>
+
+  @if (loading) {
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+      <div class="spinner-border text-primary" role="status"></div>
+      <h5 class="ms-3 mb-0">Loading dashboard...</h5>
+    </div>
+  } @else {
+    <!-- Dashboard Stats Grid -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 mb-4">
+      
+      <!-- Total Products -->
+      <div class="col">
+        <div class="card border-0 shadow-sm rounded-3 h-100 p-3 bg-white border-start border-primary border-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="text-muted small fw-semibold text-uppercase">Total Products</span>
+              <h2 class="fw-bold mb-0 mt-1 text-dark">{{ dashboardData.totalProducts }}</h2>
+            </div>
+            <div class="bg-primary-subtle text-primary rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+              <i class="bi bi-box fs-4"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Suppliers -->
+      <div class="col">
+        <div class="card border-0 shadow-sm rounded-3 h-100 p-3 bg-white border-start border-info border-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="text-muted small fw-semibold text-uppercase">Total Suppliers</span>
+              <h2 class="fw-bold mb-0 mt-1 text-dark">{{ dashboardData.totalSuppliers }}</h2>
+            </div>
+            <div class="bg-info-subtle text-info rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+              <i class="bi bi-truck fs-4"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Orders -->
+      <div class="col">
+        <div class="card border-0 shadow-sm rounded-3 h-100 p-3 bg-white border-start border-success border-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="text-muted small fw-semibold text-uppercase">Total Orders</span>
+              <h2 class="fw-bold mb-0 mt-1 text-dark">{{ dashboardData.totalOrders }}</h2>
+            </div>
+            <div class="bg-success-subtle text-success rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+              <i class="bi bi-cart-check fs-4"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending Orders -->
+      <div class="col">
+        <div class="card border-0 shadow-sm rounded-3 h-100 p-3 bg-white border-start border-warning border-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="text-muted small fw-semibold text-uppercase">Pending Orders</span>
+              <h2 class="fw-bold mb-0 mt-1 text-dark">{{ dashboardData.pendingOrders || 0 }}</h2>
+            </div>
+            <div class="bg-warning-subtle text-warning rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+              <i class="bi bi-clock-history fs-4"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Revenue -->
+      <div class="col">
+        <div class="card border-0 shadow-sm rounded-3 h-100 p-3 bg-white border-start border-secondary border-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="text-muted small fw-semibold text-uppercase">Total Revenue</span>
+              <h2 class="fw-bold mb-0 mt-1 text-dark">₹{{ dashboardData.totalRevenue | number:'1.2-2' }}</h2>
+            </div>
+            <div class="bg-secondary-subtle text-secondary rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+              <i class="bi bi-currency-rupee fs-4"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Low Stock Alerts -->
+      <div class="col">
+        <div class="card border-0 shadow-sm rounded-3 h-100 p-3 bg-white border-start border-danger border-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="text-muted small fw-semibold text-uppercase">Low Stock Items</span>
+              <h2 class="fw-bold mb-0 mt-1" [ngClass]="dashboardData.lowStockProducts > 0 ? 'text-danger' : 'text-dark'">
+                {{ dashboardData.lowStockProducts }}
+              </h2>
+            </div>
+            <div class="rounded-circle p-3 d-flex align-items-center justify-content-center" 
+                 [ngClass]="dashboardData.lowStockProducts > 0 ? 'bg-danger-subtle text-danger' : 'bg-light text-muted'" 
+                 style="width: 50px; height: 50px;">
+              <i class="bi bi-exclamation-triangle fs-4"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Recent Orders Section -->
+    <div class="card border-0 shadow-sm rounded-3">
+      <div class="card-header bg-white border-0 py-3">
+        <h5 class="fw-bold mb-0 text-dark">Recent Customer Orders</h5>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light text-muted small text-uppercase">
+              <tr>
+                <th class="px-4">Order Number</th>
+                <th>Customer</th>
+                <th>Items Ordered</th>
+                <th>Grand Total</th>
+                <th>Status</th>
+                <th class="px-4 text-end">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (dashboardData.recentOrders && dashboardData.recentOrders.length > 0) {
+                @for (order of dashboardData.recentOrders; track order._id) {
+                  <tr>
+                    <td class="px-4 fw-semibold text-primary">{{ order.orderNumber }}</td>
+                    <td>
+                      <div class="fw-semibold text-dark">{{ order.customerName }}</div>
+                      <div class="text-muted small">{{ order.customerEmail }}</div>
+                    </td>
+                    <td>
+                      @if (order.items && order.items.length > 0) {
+                        <div class="small">
+                          @for (item of order.items; track item._id; let last = $last) {
+                            <span>{{ item.product?.productName }} (x{{ item.quantity }}){{ last ? '' : ', ' }}</span>
+                          }
+                        </div>
+                      } @else {
+                        <span class="text-muted">None</span>
+                      }
+                    </td>
+                    <td class="fw-bold text-dark">₹{{ order.grandTotal | number:'1.2-2' }}</td>
+                    <td>
+                      <span class="badge rounded-pill px-2.5 py-1.5 font-medium small"
+                            [ngClass]="{
+                              'bg-warning-subtle text-warning border border-warning': order.status === 'Pending',
+                              'bg-info-subtle text-info border border-info': order.status === 'Confirmed',
+                              'bg-primary-subtle text-primary border border-primary': order.status === 'Shipped',
+                              'bg-success-subtle text-success border border-success': order.status === 'Delivered',
+                              'bg-danger-subtle text-danger border border-danger': order.status === 'Cancelled'
+                            }">
+                        {{ order.status }}
+                      </span>
+                    </td>
+                    <td class="px-4 text-end text-muted small">
+                      {{ order.createdAt | date:'mediumDate' }}
+                    </td>
+                  </tr>
+                }
+              } @else {
+                <tr>
+                  <td colspan="6" class="text-center py-4 text-muted">No orders found.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+</div>

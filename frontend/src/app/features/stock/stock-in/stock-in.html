@@ -1,0 +1,69 @@
+<div class="container-fluid mt-2" style="font-family: 'Outfit', sans-serif; max-width: 600px;">
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <a class="btn btn-outline-secondary btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" routerLink="/stock/history">
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <h2 class="fw-bold text-dark mb-0">Record Stock-In</h2>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-3">
+    <div class="card-body p-4 bg-white">
+      <form [formGroup]="stockInForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Product Select -->
+        <div class="mb-3">
+          <label for="product" class="form-label small fw-semibold text-muted">Select Product</label>
+          <select id="product" formControlName="product" class="form-select">
+            <option value="">-- Choose Product --</option>
+            @for (product of products; track product._id) {
+              <option [value]="product._id">{{ product.productName }} (SKU: {{ product.sku }}) - Current: {{ product.availableQuantity }}</option>
+            }
+          </select>
+          @if (stockInForm.get('product')?.touched && stockInForm.get('product')?.invalid) {
+            <div class="text-danger small mt-1">Please select a product.</div>
+          }
+        </div>
+
+        <!-- Supplier Select -->
+        <div class="mb-3">
+          <label for="supplier" class="form-label small fw-semibold text-muted">Purchased From Supplier</label>
+          <select id="supplier" formControlName="supplier" class="form-select">
+            <option value="">-- Choose Supplier --</option>
+            @for (supplier of suppliers; track supplier._id) {
+              <option [value]="supplier._id">{{ supplier.supplierName }}</option>
+            }
+          </select>
+          @if (stockInForm.get('supplier')?.touched && stockInForm.get('supplier')?.invalid) {
+            <div class="text-danger small mt-1">Please select a supplier.</div>
+          }
+        </div>
+
+        <!-- Quantity -->
+        <div class="mb-3">
+          <label for="quantity" class="form-label small fw-semibold text-muted">Stock-In Quantity</label>
+          <input type="number" id="quantity" formControlName="quantity" class="form-control" placeholder="Enter positive quantity">
+          @if (stockInForm.get('quantity')?.touched && stockInForm.get('quantity')?.invalid) {
+            <div class="text-danger small mt-1">Quantity must be 1 or greater.</div>
+          }
+        </div>
+
+        <!-- Remarks -->
+        <div class="mb-4">
+          <label for="remarks" class="form-label small fw-semibold text-muted">Remarks / Comments</label>
+          <textarea id="remarks" formControlName="remarks" rows="3" class="form-control" placeholder="e.g. Purchase order PO-4809, batch #12"></textarea>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+          <a class="btn btn-outline-secondary fw-semibold" routerLink="/stock/history">Cancel</a>
+          <button type="submit" class="btn btn-primary fw-semibold px-4 d-flex align-items-center gap-2" [disabled]="loading">
+            @if (loading) {
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            }
+            <span>Add Stock-In</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

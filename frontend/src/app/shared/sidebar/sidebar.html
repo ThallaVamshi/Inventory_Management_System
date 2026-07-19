@@ -1,0 +1,71 @@
+<div class="d-flex flex-column p-3 bg-dark text-white h-100" style="font-family: 'Outfit', sans-serif;">
+  <ul class="nav nav-pills flex-column mb-auto gap-2">
+    <li class="nav-item">
+      <a class="nav-link text-white d-flex align-items-center gap-2" routerLink="/dashboard" routerLinkActive="active bg-primary">
+        <i class="bi bi-speedometer2"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+    <li>
+      <a class="nav-link text-white d-flex align-items-center gap-2" routerLink="/products" routerLinkActive="active bg-primary">
+        <i class="bi bi-box"></i>
+        <span>Products</span>
+      </a>
+    </li>
+    <li>
+      <a class="nav-link text-white d-flex align-items-center gap-2" routerLink="/suppliers" routerLinkActive="active bg-primary">
+        <i class="bi bi-people"></i>
+        <span>Suppliers</span>
+      </a>
+    </li>
+
+    <hr class="border-secondary my-2">
+    <div class="text-uppercase text-secondary px-3 mb-2 small fw-bold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Stock Control</div>
+    
+    <li>
+      <a class="nav-link text-white d-flex align-items-center gap-2" routerLink="/stock/in" routerLinkActive="active bg-primary">
+        <i class="bi bi-box-arrow-in-down"></i>
+        <span>Stock In</span>
+      </a>
+    </li>
+    <li>
+      <a class="nav-link text-white d-flex align-items-center gap-2" routerLink="/stock/out" routerLinkActive="active bg-primary">
+        <i class="bi bi-box-arrow-up"></i>
+        <span>Stock Out</span>
+      </a>
+    </li>
+    <li>
+      <a class="nav-link text-white d-flex align-items-center gap-2" routerLink="/stock/history" routerLinkActive="active bg-primary">
+        <i class="bi bi-journal-text"></i>
+        <span>Stock Ledger</span>
+      </a>
+    </li>
+
+    <hr class="border-secondary my-2">
+    <div class="text-uppercase text-secondary px-3 mb-2 small fw-bold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Order Desk</div>
+
+    <li>
+      <a class="nav-link text-white d-flex align-items-center gap-2" routerLink="/orders" routerLinkActive="active bg-primary" [routerLinkActiveOptions]="{exact: true}">
+        <i class="bi bi-cart"></i>
+        <span>Orders List</span>
+      </a>
+    </li>
+    <li>
+      <a class="nav-link text-white d-flex align-items-center gap-2" routerLink="/orders/add" routerLinkActive="active bg-primary">
+        <i class="bi bi-cart-plus"></i>
+        <span>New Order</span>
+      </a>
+    </li>
+
+    @if (isAdmin()) {
+      <hr class="border-secondary my-2">
+      <div class="text-uppercase text-secondary px-3 mb-2 small fw-bold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Analytics</div>
+      <li>
+        <a class="nav-link text-white d-flex align-items-center gap-2" routerLink="/reports" routerLinkActive="active bg-primary">
+          <i class="bi bi-graph-up"></i>
+          <span>Reports</span>
+        </a>
+      </li>
+    }
+  </ul>
+</div>

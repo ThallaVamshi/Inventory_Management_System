@@ -1,0 +1,123 @@
+<div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="width: 100%; max-width: 450px; font-family: 'Outfit', sans-serif;">
+  <div class="bg-primary text-white p-4 text-center">
+    <h3 class="mb-1 fw-bold">AGY Inventory System</h3>
+    <p class="mb-0 text-white-50">Manage stock, suppliers, and customer orders</p>
+  </div>
+
+  <div class="card-body p-4 bg-white">
+    <div class="d-flex justify-content-center mb-4 border-bottom border-light pb-2">
+      <button class="btn btn-link text-decoration-none fw-bold px-3 py-1" 
+              [ngClass]="isLoginActive ? 'text-primary border-bottom border-primary border-3' : 'text-muted'"
+              (click)="toggleForm(true)">
+        LOG IN
+      </button>
+      <button class="btn btn-link text-decoration-none fw-bold px-3 py-1" 
+              [ngClass]="!isLoginActive ? 'text-primary border-bottom border-primary border-3' : 'text-muted'"
+              (click)="toggleForm(false)">
+        SIGN UP
+      </button>
+    </div>
+
+    @if (errorMessage) {
+      <div class="alert alert-danger d-flex align-items-center py-2 px-3 mb-3 small" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <div>{{ errorMessage }}</div>
+      </div>
+    }
+
+    @if (successMessage) {
+      <div class="alert alert-success d-flex align-items-center py-2 px-3 mb-3 small" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <div>{{ successMessage }}</div>
+      </div>
+    }
+
+    <!-- Login Form -->
+    @if (isLoginActive) {
+      <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+        <div class="mb-3">
+          <label for="email" class="form-label small fw-semibold text-muted">Email Address</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+            <input type="email" id="email" formControlName="email" class="form-control bg-light border-start-0" placeholder="name@example.com">
+          </div>
+          @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
+            <div class="text-danger small mt-1">Please enter a valid email address.</div>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label for="password" class="form-label small fw-semibold text-muted">Password</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
+            <input type="password" id="password" formControlName="password" class="form-control bg-light border-start-0" placeholder="••••••••">
+          </div>
+          @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
+            <div class="text-danger small mt-1">Password is required.</div>
+          }
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold text-uppercase d-flex align-items-center justify-content-center gap-2" [disabled]="loading">
+          @if (loading) {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          }
+          <span>Log In</span>
+        </button>
+      </form>
+    } @else {
+      <!-- Register Form -->
+      <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()">
+        <div class="mb-3">
+          <label for="reg-name" class="form-label small fw-semibold text-muted">Full Name</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+            <input type="text" id="reg-name" formControlName="name" class="form-control bg-light border-start-0" placeholder="Vamshi">
+          </div>
+          @if (registerForm.get('name')?.touched && registerForm.get('name')?.invalid) {
+            <div class="text-danger small mt-1">Full name is required.</div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label for="reg-email" class="form-label small fw-semibold text-muted">Email Address</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+            <input type="email" id="reg-email" formControlName="email" class="form-control bg-light border-start-0" placeholder="name@example.com">
+          </div>
+          @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
+            <div class="text-danger small mt-1">Please enter a valid email address.</div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label for="reg-password" class="form-label small fw-semibold text-muted">Password</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
+            <input type="password" id="reg-password" formControlName="password" class="form-control bg-light border-start-0" placeholder="Min 6 characters">
+          </div>
+          @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
+            <div class="text-danger small mt-1">Password must be at least 6 characters.</div>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label for="reg-role" class="form-label small fw-semibold text-muted">System Role</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0"><i class="bi bi-shield-lock text-muted"></i></span>
+            <select id="reg-role" formControlName="role" class="form-select bg-light border-start-0">
+              <option value="staff">Staff (Warehouse Operator)</option>
+              <option value="admin">Admin (System Manager)</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold text-uppercase d-flex align-items-center justify-content-center gap-2" [disabled]="loading">
+          @if (loading) {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          }
+          <span>Sign Up</span>
+        </button>
+      </form>
+    }
+  </div>
+</div>

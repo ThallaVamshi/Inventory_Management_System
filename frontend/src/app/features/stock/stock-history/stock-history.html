@@ -1,0 +1,80 @@
+<div class="container-fluid mt-2" style="font-family: 'Outfit', sans-serif;">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold text-dark mb-0">Stock Ledger</h2>
+      <span class="text-muted small">Historical log of all inventory movements</span>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-primary d-flex align-items-center gap-2 fw-semibold" routerLink="/stock/in">
+        <i class="bi bi-box-arrow-in-down"></i>
+        <span>Stock In</span>
+      </button>
+      <button class="btn btn-outline-danger d-flex align-items-center gap-2 fw-semibold" routerLink="/stock/out">
+        <i class="bi bi-box-arrow-up"></i>
+        <span>Stock Out</span>
+      </button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="d-flex justify-content-center align-items-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <h5 class="ms-3 mb-0">Loading ledger logs...</h5>
+    </div>
+  } @else {
+    <div class="card border-0 shadow-sm rounded-3">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light text-muted small text-uppercase">
+              <tr>
+                <th class="px-4">Date & Time</th>
+                <th>Product</th>
+                <th>SKU</th>
+                <th>Movement Type</th>
+                <th>Quantity</th>
+                <th>Supplier Source</th>
+                <th class="px-4">Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (movements && movements.length > 0) {
+                @for (log of movements; track log._id) {
+                  <tr>
+                    <td class="px-4 text-muted small">{{ log.createdAt | date:'medium' }}</td>
+                    <td class="fw-semibold text-dark">{{ log.product?.productName || 'Unknown Product' }}</td>
+                    <td><span class="badge bg-light text-dark border font-monospace">{{ log.product?.sku || 'N/A' }}</span></td>
+                    <td>
+                      <span class="badge rounded-pill px-2.5 py-1.5 font-medium small"
+                            [ngClass]="log.type === 'IN' ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger'">
+                        {{ log.type === 'IN' ? 'STOCK-IN' : 'STOCK-OUT' }}
+                      </span>
+                    </td>
+                    <td class="fw-bold fs-6" [ngClass]="log.type === 'IN' ? 'text-success' : 'text-danger'">
+                      {{ log.type === 'IN' ? '+' : '-' }}{{ log.quantity }}
+                    </td>
+                    <td>
+                      @if (log.type === 'IN' && log.supplier) {
+                        <span class="fw-semibold text-dark">{{ log.supplier.supplierName }}</span>
+                      } @else {
+                        <span class="text-muted small">—</span>
+                      }
+                    </td>
+                    <td class="px-4 text-muted small">{{ log.remarks || 'No remarks' }}</td>
+                  </tr>
+                }
+              } @else {
+                <tr>
+                  <td colspan="7" class="text-center py-5 text-muted">
+                    <i class="bi bi-journal-text fs-2 d-block mb-2"></i>
+                    No stock movement history recorded yet.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+</div>

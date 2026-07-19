@@ -1,0 +1,262 @@
+<div class="container-fluid mt-2" style="font-family: 'Outfit', sans-serif;">
+  
+  <div class="d-flex justify-content-between align-items-center mb-4 d-print-none">
+    <div>
+      <h2 class="fw-bold text-dark mb-0">Analytics & Reports</h2>
+      <span class="text-muted small">View monthly performance, valuation details, and log ledgers</span>
+    </div>
+    <button class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold" (click)="printReport()">
+      <i class="bi bi-printer"></i>
+      <span>Print / PDF</span>
+    </button>
+  </div>
+
+  <!-- Print Header (Visible only when printing) -->
+  <div class="d-none d-print-block mb-4 text-center border-bottom pb-3">
+    <h1 class="fw-bold mb-1">AGY Inventory Management System</h1>
+    <h3 class="text-secondary mb-1">System Audit Reports</h3>
+    <span class="text-muted small">Report generated on: {{ today | date:'medium' }}</span>
+  </div>
+
+  <!-- Tabs Navigation (Hidden when printing) -->
+  <div class="card border-0 shadow-sm rounded-3 mb-4 bg-white d-print-none">
+    <div class="card-body p-2">
+      <ul class="nav nav-pills nav-fill gap-1">
+        <li class="nav-item">
+          <button class="nav-link py-2 fw-semibold" [class.active]="activeTab === 'sales'" (click)="switchTab('sales')">
+            <i class="bi bi-graph-up me-1"></i> Monthly Sales
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link py-2 fw-semibold" [class.active]="activeTab === 'valuation'" (click)="switchTab('valuation')">
+            <i class="bi bi-currency-dollar me-1"></i> Stock Valuation
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link py-2 fw-semibold" [class.active]="activeTab === 'lowstock'" (click)="switchTab('lowstock')">
+            <i class="bi bi-exclamation-triangle me-1"></i> Low Stock Report
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link py-2 fw-semibold" [class.active]="activeTab === 'purchases'" (click)="switchTab('purchases')">
+            <i class="bi bi-truck me-1"></i> Supplier Purchase History
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="d-flex justify-content-center align-items-center py-5 bg-white rounded shadow-sm" style="min-height: 300px;">
+      <div class="spinner-border text-primary" role="status"></div>
+      <h5 class="ms-3 mb-0">Compiling report data...</h5>
+    </div>
+  } @else {
+    
+    <!-- Sales Report -->
+    @if (activeTab === 'sales') {
+      <div class="card border-0 shadow-sm rounded-3 bg-white mb-4">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="fw-bold mb-0 text-dark">Monthly Revenue Report</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light text-muted small text-uppercase">
+                <tr>
+                  <th class="px-4">Reporting Period</th>
+                  <th>Orders Count</th>
+                  <th class="px-4 text-end">Total Revenue</th>
+                </tr>
+              </thead>
+              <tbody>
+                @if (salesReport && salesReport.length > 0) {
+                  @for (record of salesReport; track record._id.year + '-' + record._id.month) {
+                    <tr>
+                      <td class="px-4 fw-semibold text-dark">{{ getMonthName(record._id.month) }} {{ record._id.year }}</td>
+                      <td>{{ record.count }} orders placed</td>
+                      <td class="px-4 text-end fw-bold text-success">₹{{ record.revenue | number:'1.2-2' }}</td>
+                    </tr>
+                  }
+                } @else {
+                  <tr>
+                    <td colspan="3" class="text-center py-5 text-muted">No sales records available.</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Stock Valuation Report -->
+    @if (activeTab === 'valuation') {
+      <!-- Valuation Summary Cards -->
+      @if (valuationSummary) {
+        <div class="row g-3 mb-4">
+          <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white border-start border-primary border-4">
+              <span class="text-muted small fw-semibold text-uppercase">Total Cataloged Items</span>
+              <h3 class="fw-bold mb-0 mt-1 text-dark">{{ valuationSummary.totalProducts }}</h3>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white border-start border-info border-4">
+              <span class="text-muted small fw-semibold text-uppercase">Total Stock Quantity</span>
+              <h3 class="fw-bold mb-0 mt-1 text-dark">{{ valuationSummary.totalStockQuantity }}</h3>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white border-start border-success border-4">
+              <span class="text-muted small fw-semibold text-uppercase">Total Stock Valuation</span>
+              <h3 class="fw-bold mb-0 mt-1 text-success">₹{{ valuationSummary.totalStockValuation | number:'1.2-2' }}</h3>
+            </div>
+          </div>
+        </div>
+      }
+
+      <div class="card border-0 shadow-sm rounded-3 bg-white">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="fw-bold mb-0 text-dark">Asset Stock Valuation Ledger</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light text-muted small text-uppercase">
+                <tr>
+                  <th class="px-4">Product Name</th>
+                  <th>SKU</th>
+                  <th>Category</th>
+                  <th>Qty In Stock</th>
+                  <th>Unit Cost</th>
+                  <th class="px-4 text-end">Total Asset Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                @if (valuationReport && valuationReport.length > 0) {
+                  @for (prod of valuationReport; track prod._id) {
+                    <tr>
+                      <td class="px-4">
+                        <div class="fw-semibold text-dark">{{ prod.productName }}</div>
+                        @if (prod.isLowStock) {
+                          <span class="badge bg-danger-subtle text-danger rounded-pill px-2 py-0.5" style="font-size: 0.7rem;">Low Stock</span>
+                        }
+                      </td>
+                      <td><span class="badge bg-light text-dark border font-monospace">{{ prod.sku }}</span></td>
+                      <td>{{ prod.category }}</td>
+                      <td class="fw-semibold">{{ prod.availableQuantity }}</td>
+                      <td>₹{{ prod.unitPrice | number:'1.2-2' }}</td>
+                      <td class="px-4 text-end fw-bold text-dark">₹{{ prod.valuation | number:'1.2-2' }}</td>
+                    </tr>
+                  }
+                } @else {
+                  <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">No valuation records available.</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Low Stock Report -->
+    @if (activeTab === 'lowstock') {
+      <div class="card border-0 shadow-sm rounded-3 bg-white">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="fw-bold mb-0 text-danger">Low Stock Alerts & Reorder Report</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light text-muted small text-uppercase">
+                <tr>
+                  <th class="px-4">Product Name</th>
+                  <th>SKU</th>
+                  <th>Category</th>
+                  <th>Available Quantity</th>
+                  <th>Reorder Limit</th>
+                  <th class="px-4">Alert Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                @if (lowStockReport && lowStockReport.length > 0) {
+                  @for (prod of lowStockReport; track prod._id) {
+                    <tr>
+                      <td class="px-4 fw-semibold text-dark">{{ prod.productName }}</td>
+                      <td><span class="badge bg-light text-dark border font-monospace">{{ prod.sku }}</span></td>
+                      <td>{{ prod.category }}</td>
+                      <td class="fw-bold text-danger">{{ prod.availableQuantity }}</td>
+                      <td>{{ prod.reorderLevel }}</td>
+                      <td class="px-4">
+                        @if (prod.availableQuantity === 0) {
+                          <span class="badge bg-danger rounded-pill px-2.5 py-1">OUT OF STOCK</span>
+                        } @else {
+                          <span class="badge bg-warning text-dark rounded-pill px-2.5 py-1">LOW STOCK</span>
+                        }
+                      </td>
+                    </tr>
+                  }
+                } @else {
+                  <tr>
+                    <td colspan="6" class="text-center py-5 text-success fw-semibold">
+                      <i class="bi bi-check-circle-fill fs-3 d-block mb-2 text-success"></i>
+                      All inventory stock levels are healthy! No reorder alerts.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Supplier Purchase History Report -->
+    @if (activeTab === 'purchases') {
+      <div class="card border-0 shadow-sm rounded-3 bg-white">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="fw-bold mb-0 text-dark">Supplier Procurement History (Ledger IN)</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light text-muted small text-uppercase">
+                <tr>
+                  <th class="px-4">Date</th>
+                  <th>Supplier Name</th>
+                  <th>Product Purchased</th>
+                  <th>SKU</th>
+                  <th>Quantity Received</th>
+                  <th class="px-4">Procurement Remarks</th>
+                </tr>
+              </thead>
+              <tbody>
+                @if (purchasesReport && purchasesReport.length > 0) {
+                  @for (pur of purchasesReport; track pur._id) {
+                    <tr>
+                      <td class="px-4 text-muted small">{{ pur.createdAt | date:'mediumDate' }}</td>
+                      <td class="fw-semibold text-dark">{{ pur.supplier?.supplierName || 'Unknown Supplier' }}</td>
+                      <td>{{ pur.product?.productName || 'Unknown Product' }}</td>
+                      <td><span class="badge bg-light text-dark border font-monospace">{{ pur.product?.sku || 'N/A' }}</span></td>
+                      <td class="fw-bold text-success">+{{ pur.quantity }}</td>
+                      <td class="px-4 text-muted small">{{ pur.remarks || 'No remarks' }}</td>
+                    </tr>
+                  }
+                } @else {
+                  <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">No procurement records cataloged.</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    }
+
+  }
+</div>

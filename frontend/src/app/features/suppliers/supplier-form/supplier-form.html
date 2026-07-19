@@ -1,0 +1,91 @@
+<div class="container-fluid mt-2" style="font-family: 'Outfit', sans-serif; max-width: 700px;">
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <a class="btn btn-outline-secondary btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" routerLink="/suppliers">
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <h2 class="fw-bold text-dark mb-0">{{ isEditMode ? 'Edit Supplier' : 'Register New Supplier' }}</h2>
+  </div>
+
+  @if (loading && isEditMode) {
+    <div class="d-flex justify-content-center align-items-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <h5 class="ms-3 mb-0">Loading supplier data...</h5>
+    </div>
+  } @else {
+    <div class="card border-0 shadow-sm rounded-3">
+      <div class="card-body p-4 bg-white">
+        <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()">
+          
+          <!-- Supplier Name -->
+          <div class="mb-3">
+            <label for="supplierName" class="form-label small fw-semibold text-muted">Supplier Company Name</label>
+            <input type="text" id="supplierName" formControlName="supplierName" class="form-control" placeholder="e.g. Geeth Electronics Private Limited">
+            @if (supplierForm.get('supplierName')?.touched && supplierForm.get('supplierName')?.invalid) {
+              <div class="text-danger small mt-1">Supplier company name is required.</div>
+            }
+          </div>
+
+          <div class="row">
+            <!-- Contact Person -->
+            <div class="col-12 col-md-6 mb-3">
+              <label for="contactPerson" class="form-label small fw-semibold text-muted">Contact Person Name</label>
+              <input type="text" id="contactPerson" formControlName="contactPerson" class="form-control" placeholder="e.g. John Doe">
+              @if (supplierForm.get('contactPerson')?.touched && supplierForm.get('contactPerson')?.invalid) {
+                <div class="text-danger small mt-1">Contact person is required.</div>
+              }
+            </div>
+
+            <!-- GST Number -->
+            <div class="col-12 col-md-6 mb-3">
+              <label for="gstNumber" class="form-label small fw-semibold text-muted">GST Identification Number (GSTIN)</label>
+              <input type="text" id="gstNumber" formControlName="gstNumber" class="form-control font-monospace" placeholder="e.g. 22AAAAA0000A1Z5">
+              @if (supplierForm.get('gstNumber')?.touched && supplierForm.get('gstNumber')?.invalid) {
+                <div class="text-danger small mt-1">GST number is required.</div>
+              }
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Email -->
+            <div class="col-12 col-md-6 mb-3">
+              <label for="email" class="form-label small fw-semibold text-muted">Email Address</label>
+              <input type="email" id="email" formControlName="email" class="form-control" placeholder="supplier@example.com">
+              @if (supplierForm.get('email')?.touched && supplierForm.get('email')?.invalid) {
+                <div class="text-danger small mt-1">Please enter a valid email address.</div>
+              }
+            </div>
+
+            <!-- Mobile -->
+            <div class="col-12 col-md-6 mb-3">
+              <label for="mobileNumber" class="form-label small fw-semibold text-muted">10-Digit Mobile Number</label>
+              <input type="text" id="mobileNumber" formControlName="mobileNumber" class="form-control" placeholder="e.g. 9876543210">
+              @if (supplierForm.get('mobileNumber')?.touched && supplierForm.get('mobileNumber')?.invalid) {
+                <div class="text-danger small mt-1">Please enter a valid 10-digit mobile number.</div>
+              }
+            </div>
+          </div>
+
+          <!-- Address -->
+          <div class="mb-4">
+            <label for="address" class="form-label small fw-semibold text-muted">Physical Address</label>
+            <textarea id="address" formControlName="address" rows="3" class="form-control" placeholder="e.g. 123 Industrial Area, Phase II, New Delhi - 110020"></textarea>
+            @if (supplierForm.get('address')?.touched && supplierForm.get('address')?.invalid) {
+              <div class="text-danger small mt-1">Physical address is required.</div>
+            }
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <a class="btn btn-outline-secondary fw-semibold" routerLink="/suppliers">Cancel</a>
+            <button type="submit" class="btn btn-primary fw-semibold px-4 d-flex align-items-center gap-2" [disabled]="loading">
+              @if (loading) {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              }
+              <span>{{ isEditMode ? 'Update Supplier' : 'Register Supplier' }}</span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  }
+</div>

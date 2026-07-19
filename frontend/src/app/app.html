@@ -1,0 +1,15 @@
+@if (authService.isLoggedIn()) {
+  <div class="d-flex flex-column min-vh-100">
+    <app-navbar></app-navbar>
+    <div class="d-flex flex-grow-1">
+      <app-sidebar class="border-end bg-dark text-white d-none d-md-block" style="width: 250px; min-height: calc(100vh - 56px);"></app-sidebar>
+      <main class="flex-grow-1 p-4 bg-light overflow-auto" style="min-height: calc(100vh - 56px);">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </div>
+} @else {
+  <div class="bg-light min-vh-100 w-100 d-flex align-items-center justify-content-center">
+    <router-outlet></router-outlet>
+  </div>
+}

@@ -1,0 +1,49 @@
+const mongoose = require("mongoose");
+
+const supplierSchema = new mongoose.Schema(
+    {
+        supplierName: {
+            type: String,
+            required: true,
+            trim: true
+        },
+
+        contactPerson: {
+            type: String,
+            required: true,
+            trim: true
+        },
+
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true
+        },
+
+        mobileNumber: {
+            type: String,
+            required: true,
+            trim: true
+        },
+
+        address: {
+            type: String,
+            required: true,
+            trim: true
+        },
+
+        gstNumber: {
+            type: String,
+            required: true,
+            unique: true,
+            trim: true
+        }
+    },
+    {
+        timestamps: true
+    }
+);
+
+module.exports = mongoose.model("Supplier", supplierSchema);

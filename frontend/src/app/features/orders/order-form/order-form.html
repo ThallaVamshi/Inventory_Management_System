@@ -1,0 +1,169 @@
+<div class="container-fluid mt-2" style="font-family: 'Outfit', sans-serif;">
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <a class="btn btn-outline-secondary btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" routerLink="/orders">
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <h2 class="fw-bold text-dark mb-0">Create Customer Order</h2>
+  </div>
+
+  <form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
+    <div class="row g-4">
+      
+      <!-- Customer Information Panel -->
+      <div class="col-12 col-lg-8">
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+          <div class="card-header bg-white border-0 py-3">
+            <h5 class="fw-bold mb-0 text-dark">Customer & Delivery Details</h5>
+          </div>
+          <div class="card-body bg-white p-4">
+            
+            <div class="row">
+              <!-- Name -->
+              <div class="col-12 col-md-6 mb-3">
+                <label for="customerName" class="form-label small fw-semibold text-muted">Customer Name</label>
+                <input type="text" id="customerName" formControlName="customerName" class="form-control" placeholder="e.g. Acme Corp">
+                @if (orderForm.get('customerName')?.touched && orderForm.get('customerName')?.invalid) {
+                  <div class="text-danger small mt-1">Customer name is required.</div>
+                }
+              </div>
+
+              <!-- Date -->
+              <div class="col-12 col-md-6 mb-3">
+                <label for="expectedDeliveryDate" class="form-label small fw-semibold text-muted">Expected Delivery Date</label>
+                <input type="date" id="expectedDeliveryDate" formControlName="expectedDeliveryDate" class="form-control">
+                @if (orderForm.get('expectedDeliveryDate')?.touched && orderForm.get('expectedDeliveryDate')?.invalid) {
+                  <div class="text-danger small mt-1">Expected delivery date is required.</div>
+                }
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Email -->
+              <div class="col-12 col-md-6 mb-3">
+                <label for="customerEmail" class="form-label small fw-semibold text-muted">Customer Email (Optional)</label>
+                <input type="email" id="customerEmail" formControlName="customerEmail" class="form-control" placeholder="client@example.com">
+                @if (orderForm.get('customerEmail')?.touched && orderForm.get('customerEmail')?.invalid) {
+                  <div class="text-danger small mt-1">Please enter a valid email address.</div>
+                }
+              </div>
+
+              <!-- Phone -->
+              <div class="col-12 col-md-6 mb-3">
+                <label for="customerPhone" class="form-label small fw-semibold text-muted">10-Digit Phone Number (Optional)</label>
+                <input type="text" id="customerPhone" formControlName="customerPhone" class="form-control" placeholder="e.g. 9876543210">
+                @if (orderForm.get('customerPhone')?.touched && orderForm.get('customerPhone')?.invalid) {
+                  <div class="text-danger small mt-1">Phone number must be exactly 10 digits.</div>
+                }
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Line Items Selection Panel -->
+        <div class="card border-0 shadow-sm rounded-3">
+          <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 text-dark">Order Line Items</h5>
+            <button type="button" class="btn btn-outline-primary btn-sm fw-semibold" (click)="addItem()">
+              <i class="bi bi-plus-lg"></i> Add Item
+            </button>
+          </div>
+          <div class="card-body bg-white p-4">
+            
+            <div formArrayName="items">
+              @for (item of items.controls; track $index; let i = $index) {
+                <div [formGroupName]="i" class="row g-2 align-items-end mb-3 pb-3 border-bottom border-light">
+                  <!-- Product Dropdown -->
+                  <div class="col-12 col-md-5">
+                    <label class="form-label small fw-semibold text-muted">Product</label>
+                    <select formControlName="product" class="form-select">
+                      <option value="">-- Select Product --</option>
+                      @for (p of products; track p._id) {
+                        <option [value]="p._id">{{ p.productName }} (SKU: {{ p.sku }}) - ₹{{ p.unitPrice }}</option>
+                      }
+                    </select>
+                    @if (item.get('product')?.touched && item.get('product')?.invalid) {
+                      <div class="text-danger small mt-1">Product is required.</div>
+                    }
+                  </div>
+
+                  <!-- Details (Read Only) -->
+                  <div class="col-6 col-sm-3 col-md-2 text-muted small pb-2">
+                    @if (item.get('product')?.value) {
+                      <div>Price: ₹{{ getProductPrice(item.get('product')?.value) }}</div>
+                      <div>Stock: <strong [ngClass]="getProductStock(item.get('product')?.value) < (item.get('quantity')?.value ?? 0) ? 'text-danger' : 'text-success'">{{ getProductStock(item.get('product')?.value) }}</strong></div>
+                    }
+                  </div>
+
+                  <!-- Quantity -->
+                  <div class="col-3 col-sm-2 col-md-2">
+                    <label class="form-label small fw-semibold text-muted">Qty</label>
+                    <input type="number" formControlName="quantity" class="form-control">
+                    @if (item.get('quantity')?.touched && item.get('quantity')?.invalid) {
+                      <div class="text-danger small mt-1">Min 1.</div>
+                    }
+                  </div>
+
+                  <!-- Discount -->
+                  <div class="col-3 col-sm-2 col-md-2">
+                    <label class="form-label small fw-semibold text-muted">Disc %</label>
+                    <input type="number" formControlName="discount" class="form-control" placeholder="0">
+                  </div>
+
+                  <!-- Remove Action -->
+                  <div class="col-12 col-sm-1 col-md-1 text-end pb-1">
+                    <button type="button" class="btn btn-outline-danger btn-sm border-0" (click)="removeItem(i)">
+                      <i class="bi bi-trash fs-5"></i>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial Calculation Summary Panel -->
+      <div class="col-12 col-lg-4">
+        <div class="card border-0 shadow-sm rounded-3 bg-white mb-4 sticky-lg-top" style="top: 20px;">
+          <div class="card-header bg-white border-0 py-3">
+            <h5 class="fw-bold mb-0 text-dark">Order Invoice Summary</h5>
+          </div>
+          <div class="card-body bg-white p-4">
+            
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">Subtotal:</span>
+              <span class="fw-semibold text-dark">₹{{ subtotal | number:'1.2-2' }}</span>
+            </div>
+            
+            <div class="d-flex justify-content-between mb-2 text-danger">
+              <span>Item Discounts:</span>
+              <span>-₹{{ discountAmount | number:'1.2-2' }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">GST Tax (18%):</span>
+              <span class="fw-semibold text-dark">₹{{ taxAmount | number:'1.2-2' }}</span>
+            </div>
+
+            <hr class="my-3 border-secondary">
+
+            <div class="d-flex justify-content-between mb-4">
+              <span class="fs-5 fw-bold text-dark">Grand Total:</span>
+              <span class="fs-5 fw-bold text-primary">₹{{ grandTotal | number:'1.2-2' }}</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2.5 fw-bold text-uppercase d-flex align-items-center justify-content-center gap-2" [disabled]="loading || items.length === 0">
+              @if (loading) {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              }
+              <span>Place Customer Order</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </form>
+</div>
