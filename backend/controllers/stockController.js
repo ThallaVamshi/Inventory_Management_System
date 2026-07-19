@@ -1,5 +1,5 @@
 const StockMovement = require("../models/StockMovement");
-const Product = ../models/product;
+const Product = require("../models/product");
 
 // ==========================================
 // Stock In
