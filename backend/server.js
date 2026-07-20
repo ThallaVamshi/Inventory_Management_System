@@ -1,4 +1,7 @@
-require("dotenv").config();
+const path = require("path");
+const dns = require("dns");
+dns.setDefaultResultOrder("ipv4first");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const app = require("./app");
 const connectDB = require("./config/db");

@@ -1,4 +1,6 @@
 export const environment = {
-  production: false,
-  apiUrl: 'https://inventory-management-system-1-69h6.onrender.com/api'
+  production: true,
+  apiUrl: typeof window !== 'undefined' && window.location.port === '4200'
+    ? 'http://localhost:5000/api'
+    : '/api'
 };

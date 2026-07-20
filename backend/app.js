@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 const path = require("path");
 const fs = require("fs");
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, ".env") });
 
 const app = express();
 
@@ -14,27 +14,27 @@ const app = express();
 
 const allowedOrigins = [
     "http://localhost:4200",
-    "https://your-vercel-app.vercel.app" // Replace with your Vercel URL
-];
+    "https://your-vercel-app.vercel.app", // Replace with your actual Vercel URL
+    process.env.FRONTEND_URL
+].filter(Boolean);
 
-app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (Postman, Swagger, etc.)
-        if (!origin) return callback(null, true);
+app.use(
+    cors({
+        origin: function (origin, callback) {
+            // Allow requests from Postman, Swagger, etc.
+            if (!origin) return callback(null, true);
 
-        if (allowedOrigins.includes(origin)) {
-            return callback(null, true);
-        }
+            if (allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
 
-        return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-}));
-
-// Handle preflight requests
-app.options("*", cors());
+            return callback(new Error("Not allowed by CORS"));
+        },
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"]
+    })
+);
 
 // ==========================================
 // Middleware
@@ -44,7 +44,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ==========================================
-// Swagger Configuration
+// Swagger
 // ==========================================
 
 const { swaggerUi, swaggerSpec } = require("./config/swagger");
@@ -63,10 +63,6 @@ const orderRoutes = require("./routes/orderRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 
-// ==========================================
-// API Routes
-// ==========================================
-
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/suppliers", supplierRoutes);
@@ -76,7 +72,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/reports", reportRoutes);
 
 // ==========================================
-// Static Files
+// Static Frontend
 // ==========================================
 
 const frontendDistPath = path.join(
@@ -88,11 +84,8 @@ if (fs.existsSync(frontendDistPath)) {
 
     app.use(express.static(frontendDistPath));
 
-    app.get("/{*any}", (req, res, next) => {
-        if (req.path.startsWith("/api")) {
-            return next();
-        }
-
+    // Serve Angular app for all non-API routes
+    app.get(/^(?!\/api).*/, (req, res) => {
         res.sendFile(path.join(frontendDistPath, "index.html"));
     });
 
@@ -115,7 +108,7 @@ if (fs.existsSync(frontendDistPath)) {
 }
 
 // ==========================================
-// Global Error Handler
+// Error Handler
 // ==========================================
 
 const errorHandler = require("./middleware/errorMiddleware");
