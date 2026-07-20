@@ -30,7 +30,7 @@ const { authorize } = require("../middleware/roleMiddleware");
 router.get(
     "/",
     protect,
-    authorize("admin"),
+    authorize("admin", "staff"),
     getDashboardSummary
 );
 
