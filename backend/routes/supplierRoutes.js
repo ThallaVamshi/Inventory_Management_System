@@ -69,7 +69,7 @@ router.get("/:id", protect, getSupplierById);
 router.post(
     "/",
     protect,
-    authorize("admin"),
+    authorize("admin", "staff"),
     supplierValidationRules,
     validate,
     createSupplier
@@ -96,7 +96,7 @@ router.post(
 router.put(
     "/:id",
     protect,
-    authorize("admin"),
+    authorize("admin", "staff"),
     supplierValidationRules,
     validate,
     updateSupplier
