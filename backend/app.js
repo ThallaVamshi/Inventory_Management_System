@@ -18,23 +18,27 @@ const allowedOrigins = [
     process.env.FRONTEND_URL
 ].filter(Boolean);
 
-app.use(
-    cors({
-        origin: function (origin, callback) {
-            // Allow requests from Postman, Swagger, etc.
-            if (!origin) return callback(null, true);
+const corsOptionsDelegate = function (req, callback) {
+    const origin = req.header('Origin');
+    const host = req.get('host');
 
-            if (allowedOrigins.includes(origin)) {
-                return callback(null, true);
-            }
+    const isAllowed = !origin || 
+                      allowedOrigins.includes(origin) || 
+                      (host && origin.includes(host));
 
-            return callback(new Error("Not allowed by CORS"));
-        },
-        credentials: true,
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"]
-    })
-);
+    if (isAllowed) {
+        callback(null, {
+            origin: true,
+            credentials: true,
+            methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            allowedHeaders: ["Content-Type", "Authorization"]
+        });
+    } else {
+        callback(null, { origin: false });
+    }
+};
+
+app.use(cors(corsOptionsDelegate));
 
 // ==========================================
 // Middleware
