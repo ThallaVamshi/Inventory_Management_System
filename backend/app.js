@@ -14,7 +14,8 @@ const app = express();
 
 const allowedOrigins = [
     "http://localhost:4200",
-    "https://your-vercel-app.vercel.app", // Replace with your actual Vercel URL
+    "https://inventory-management-system.vercel.app",
+    "https://inventory-management-system-b9tb.onrender.com",
     process.env.FRONTEND_URL
 ].filter(Boolean);
 
