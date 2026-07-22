@@ -5,7 +5,6 @@ import { Dashboard } from './features/dashboard/dashboard/dashboard';
 
 import { ProductList } from './features/products/product-list/product-list';
 import { ProductForm } from './features/products/product-form/product-form';
-import { EditProduct } from './features/products/edit-product/edit-product';
 
 import { SupplierList } from './features/suppliers/supplier-list/supplier-list';
 import { SupplierForm } from './features/suppliers/supplier-form/supplier-form';
@@ -47,22 +46,12 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'products/edit/:id',
-    component: EditProduct,
-    canActivate: [authGuard]
-  },
-  {
     path: 'suppliers',
     component: SupplierList,
     canActivate: [authGuard]
   },
   {
     path: 'suppliers/add',
-    component: SupplierForm,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'suppliers/edit/:id',
     component: SupplierForm,
     canActivate: [authGuard]
   },
