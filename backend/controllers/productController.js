@@ -1,4 +1,5 @@
-const Product = require("../models/product");// ==========================================
+const Product = require("../models/product");
+const StockMovement = require("../models/StockMovement");// ==========================================
 // Create Product
 // ==========================================
 const createProduct = async (req, res) => {
@@ -168,6 +169,9 @@ const deleteProduct = async (req, res) => {
                 message: "Product not found"
             });
         }
+
+        // Delete all stock movements related to this product
+        await StockMovement.deleteMany({ product: req.params.id });
 
         res.status(200).json({
             success: true,

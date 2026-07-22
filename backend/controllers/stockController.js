@@ -108,10 +108,13 @@ const getStockHistory = async (req, res) => {
             .populate("supplier", "supplierName")
             .sort({ createdAt: -1 });
 
+        // Filter out orphaned stock movements for deleted products
+        const activeHistory = history.filter(movement => movement.product !== null);
+
         res.status(200).json({
             success: true,
-            count: history.length,
-            data: history
+            count: activeHistory.length,
+            data: activeHistory
         });
 
     } catch (error) {
