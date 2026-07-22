@@ -4,7 +4,7 @@
       <h2 class="fw-bold text-dark mb-0">Suppliers Registry</h2>
       <span class="text-muted small">Manage supply partners, contact details, and tax registrations</span>
     </div>
-    <button class="btn btn-primary d-flex align-items-center gap-2 fw-semibold" routerLink="/suppliers/add" [disabled]="!isAdmin">
+    <button class="btn btn-primary d-flex align-items-center gap-2 fw-semibold" routerLink="/suppliers/add">
       <i class="bi bi-person-plus"></i>
       <span>Add Supplier</span>
     </button>
@@ -60,7 +60,7 @@
                     <td><span class="badge bg-light text-dark border font-monospace">{{ supplier.gstNumber }}</span></td>
                     <td class="text-truncate" style="max-width: 200px;">{{ supplier.address }}</td>
                     <td class="px-4 text-end">
-                      <a class="btn btn-outline-warning btn-sm me-2 fw-semibold" [routerLink]="['/suppliers/edit', supplier._id]" [class.disabled]="!isAdmin">
+                      <a class="btn btn-outline-warning btn-sm me-2 fw-semibold" [routerLink]="['/suppliers/edit', supplier._id]">
                         <i class="bi bi-pencil me-1"></i> Edit
                       </a>
                       <button class="btn btn-outline-danger btn-sm fw-semibold" [disabled]="!isAdmin" (click)="deleteSupplier(supplier._id)">
