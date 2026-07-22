@@ -3,10 +3,12 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
 const fs = require("fs");
+const compression = require("compression");
 
 dotenv.config({ path: path.join(__dirname, ".env") });
 
 const app = express();
+app.use(compression());
 
 // ==========================================
 // CORS Configuration
@@ -87,7 +89,10 @@ const frontendDistPath = path.join(
 
 if (fs.existsSync(frontendDistPath)) {
 
-    app.use(express.static(frontendDistPath));
+    app.use(express.static(frontendDistPath, {
+        maxAge: "1d",
+        etag: true
+    }));
 
     // Serve Angular app for all non-API routes
     app.get(/^(?!\/api).*/, (req, res) => {
